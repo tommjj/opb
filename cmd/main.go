@@ -60,6 +60,15 @@ func main() {
 		return
 	}
 
+	// del mode
+	if agr[0] == "del" {
+		err = conf.Del(agr[1:]...)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
+
 	flags, a := cutFlags(agr...)
 
 	if len(a) == 0 {
@@ -115,6 +124,8 @@ func showHelp() {
 	fmt.Println(`  set browser	[browser path]	# set browser path.	example:"set browser browser.exe"`)
 	fmt.Println(`  set link 	[key] [url]	# set quick link.	example:"set link ex https://example.com"`)
 	fmt.Println(`  set search 	[key] [url]	# set search link.	example:"set search ex https://example.com?q=$"`)
+	fmt.Println(`  del link 	[key] 		# delete quick link.	example:"del link ex"`)
+	fmt.Println(`  del search 	[key] 		# delete search link.	example:"del search ex"`)
 	fmt.Println(`  conf				# show conf`)
 
 }

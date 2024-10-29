@@ -72,6 +72,14 @@ func (f *FileStorage) Sync(v any) error {
 	if err != nil {
 		return err
 	}
+	err = file.Truncate(0)
+	if err != nil {
+		return err
+	}
+	_, err = file.Seek(0, 0)
+	if err != nil {
+		return err
+	}
 
 	_, err = file.Write(bytes)
 	if err != nil {

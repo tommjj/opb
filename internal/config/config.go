@@ -13,18 +13,18 @@ var (
 
 type Config struct {
 	// Browser app path example:"/c/br.exe"
-	Browser string
+	Browser string `json:"browser"`
 
 	// SearchDefault name of SearchDefault
 	// example:"google"
 	// Search list search links
 	// example:"google: https://www.google.com/search?q=$"
-	Search map[string]string
+	Search map[string]string `json:"search,omitempty"`
 
 	// Links is a map data
 	// map[link name]url
 	// example:"yt: https://www.youtube.com"
-	Links map[string]string
+	Links map[string]string `json:"links,omitempty"`
 }
 
 type ConfigStore struct {
@@ -102,4 +102,20 @@ func (c *ConfigStore) Set(agr ...string) error {
 	default:
 		return ErrInvalid
 	}
+}
+
+func (c *ConfigStore) Del(agr ...string) error {
+	if len(agr) != 2 {
+		return errors.New("arguments is invalid")
+	}
+
+	switch agr[0] {
+	case "link":
+		delete(c.Config.Links, agr[1])
+	case "search":
+		delete(c.Config.Search, agr[1])
+	default:
+		return ErrInvalid
+	}
+	return c.Sync()
 }
