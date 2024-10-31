@@ -6,7 +6,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/tommjj/go-opb/internal/browser"
+	"github.com/tommjj/go-opb/internal/cli"
 	"github.com/tommjj/go-opb/internal/config"
 	"github.com/tommjj/go-opb/internal/filestorage"
 )
@@ -23,10 +23,10 @@ func main() {
 
 	filestorage := filestorage.New(path.Join(homeDir, ".opb-conf.json"))
 
-	conf := config.New(filestorage)
-	err = conf.Load()
+	cli := cli.New(filestorage)
+	err = cli.LoadConf()
 	if err != nil {
-		err := browser.Reset(conf)
+		err := cli.Reset()
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -35,7 +35,7 @@ func main() {
 	agr := os.Args[1:]
 
 	if len(agr) == 0 {
-		browser.OpenDefault(conf.Config)
+		cli.OpenDefault()
 		return
 	}
 
@@ -47,13 +47,13 @@ func main() {
 
 	// show conf mode
 	if agr[0] == "conf" {
-		showConf(conf.Config)
+		showConf(cli.Config)
 		return
 	}
 
 	// set mode
 	if agr[0] == "set" {
-		err = conf.Set(agr[1:]...)
+		err = cli.Set(agr[1:]...)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -62,7 +62,7 @@ func main() {
 
 	// del mode
 	if agr[0] == "del" {
-		err = conf.Del(agr[1:]...)
+		err = cli.Del(agr[1:]...)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -71,15 +71,7 @@ func main() {
 
 	flags, a := cutFlags(agr...)
 
-	if len(a) == 0 {
-		err := browser.OpenDefault(conf.Config, flags...)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return
-	}
-
-	err = browser.Open(conf.Config, agr, flags)
+	err = cli.Open(a, flags)
 	if err != nil {
 		log.Fatal(err)
 	}
