@@ -125,7 +125,7 @@ func (c *cli) Open(agr []string, flags []string) error {
 	if len(agr) > 1 {
 		link, ok := c.Config.Search[agr[0]]
 		if ok {
-			url, _ := browser.BuildQuery(link, "$", strings.Join(agr[1:], " "))
+			url, _ := utils.BuildQuery(link, "$", strings.Join(agr[1:], " "))
 
 			return browser.OpenBrowser(c.Config.Browser, append(flags, url)...)
 		}
@@ -160,7 +160,7 @@ func (c *cli) OpenDefault(flags ...string) error {
 func (c *cli) OpenSearchDefault(agr []string, flags []string) error {
 	link, ok := c.Config.Search["default"]
 	if ok {
-		url, _ := browser.BuildQuery(link, "$", strings.Join(agr, " "))
+		url, _ := utils.BuildQuery(link, "$", strings.Join(agr, " "))
 
 		return browser.OpenBrowser(c.Config.Browser, append(flags, url)...)
 	}

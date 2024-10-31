@@ -1,4 +1,4 @@
-package browser
+package utils
 
 import "strings"
 
