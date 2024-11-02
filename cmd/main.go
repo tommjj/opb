@@ -39,41 +39,32 @@ func main() {
 		return
 	}
 
-	// help mode
-	if agr[0] == "-h" || agr[0] == "--help" {
+	switch agr[0] {
+	case "-h", "--help":
 		showHelp()
-		return
-	}
 
-	// show conf mode
-	if agr[0] == "conf" {
+	case "conf":
 		showConf(cli.Config)
-		return
-	}
 
-	// set mode
-	if agr[0] == "set" {
+	case "set":
 		err = cli.Set(agr[1:]...)
 		if err != nil {
 			log.Fatal(err)
 		}
-		return
-	}
 
-	// del mode
-	if agr[0] == "del" {
+	case "del":
 		err = cli.Del(agr[1:]...)
 		if err != nil {
 			log.Fatal(err)
 		}
-		return
-	}
 
-	flags, a := cutFlags(agr...)
+	default:
+		flags, a := cutFlags(agr...)
 
-	err = cli.Open(a, flags)
-	if err != nil {
-		log.Fatal(err)
+		err = cli.Open(a, flags)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
