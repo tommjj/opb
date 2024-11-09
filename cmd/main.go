@@ -32,14 +32,14 @@ func main() {
 		}
 	}
 
-	agr := os.Args[1:]
+	args := os.Args[1:]
 
-	if len(agr) == 0 {
+	if len(args) == 0 {
 		cli.OpenDefault()
 		return
 	}
 
-	switch agr[0] {
+	switch args[0] {
 	case "-h", "--help":
 		showHelp()
 
@@ -47,19 +47,19 @@ func main() {
 		showConf(cli.Config)
 
 	case "set":
-		err = cli.Set(agr[1:]...)
+		err = cli.Set(args[1:]...)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 	case "del":
-		err = cli.Del(agr[1:]...)
+		err = cli.Del(args[1:]...)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 	default:
-		flags, a := cutFlags(agr...)
+		flags, a := cutFlags(args...)
 
 		err = cli.Open(a, flags)
 		if err != nil {
@@ -69,10 +69,10 @@ func main() {
 }
 
 // cutFlags
-func cutFlags(agr ...string) ([]string, []string) {
+func cutFlags(args ...string) ([]string, []string) {
 	flags := []string{}
 
-	for idx, v := range agr {
+	for idx, v := range args {
 		if isFlag(v) {
 			flag, ok := shortFlags[v]
 			if !ok {
@@ -81,7 +81,7 @@ func cutFlags(agr ...string) ([]string, []string) {
 
 			flags = append(flags, flag)
 		} else {
-			return flags, agr[idx:]
+			return flags, args[idx:]
 		}
 	}
 	return flags, []string{}

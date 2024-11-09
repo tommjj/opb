@@ -5,13 +5,13 @@ import (
 )
 
 // OpenBrowser open browser
-func OpenBrowser(browserPath string, arg ...string) error {
+func OpenBrowser(browserPath string, args ...string) error {
 	path, err := exec.LookPath(browserPath)
 	if err != nil {
 		return err
 	}
 
-	cmd := exec.Command(path, arg...)
+	cmd := exec.Command(path, args...)
 	if err := cmd.Run(); err != nil {
 		return err
 	}

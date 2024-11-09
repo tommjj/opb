@@ -67,17 +67,17 @@ func (c *cli) SetBrowser(browserPath string) error {
 	return c.SyncConf()
 }
 
-func (c *cli) Set(agr ...string) error {
-	if len(agr) < 2 || len(agr) > 3 {
+func (c *cli) Set(args ...string) error {
+	if len(args) < 2 || len(args) > 3 {
 		return errors.New("arguments is invalid")
 	}
 
-	switch len(agr) {
+	switch len(args) {
 	case 2:
 
-		switch agr[0] {
+		switch args[0] {
 		case "browser":
-			err := c.SetBrowser(agr[1])
+			err := c.SetBrowser(args[1])
 			if err != nil {
 				return err
 			}
@@ -86,12 +86,12 @@ func (c *cli) Set(agr ...string) error {
 		return c.SyncConf()
 	case 3:
 
-		switch agr[0] {
+		switch args[0] {
 		case "link":
-			c.Config.Links[agr[1]] = agr[2]
+			c.Config.Links[args[1]] = args[2]
 
 		case "search":
-			c.Config.Search[agr[1]] = agr[2]
+			c.Config.Search[args[1]] = args[2]
 		}
 		return c.SyncConf()
 
@@ -100,16 +100,16 @@ func (c *cli) Set(agr ...string) error {
 	}
 }
 
-func (c *cli) Del(agr ...string) error {
-	if len(agr) != 2 {
+func (c *cli) Del(args ...string) error {
+	if len(args) != 2 {
 		return errors.New("arguments is invalid")
 	}
 
-	switch agr[0] {
+	switch args[0] {
 	case "link":
-		delete(c.Config.Links, agr[1])
+		delete(c.Config.Links, args[1])
 	case "search":
-		delete(c.Config.Search, agr[1])
+		delete(c.Config.Search, args[1])
 	default:
 		return ErrInvalid
 	}
@@ -117,33 +117,33 @@ func (c *cli) Del(agr ...string) error {
 }
 
 // Open handle open browser
-func (c *cli) Open(agr []string, flags []string) error {
-	if len(agr) == 0 {
+func (c *cli) Open(args []string, flags []string) error {
+	if len(args) == 0 {
 		return c.OpenDefault(flags...)
 	}
 
-	if len(agr) > 1 {
-		link, ok := c.Config.Search[agr[0]]
+	if len(args) > 1 {
+		link, ok := c.Config.Search[args[0]]
 		if ok {
-			url, _ := utils.BuildQuery(link, "$", strings.Join(agr[1:], " "))
+			url, _ := utils.BuildQuery(link, "$", strings.Join(args[1:], " "))
 
 			return browser.OpenBrowser(c.Config.Browser, append(flags, url)...)
 		}
 
-		return c.OpenSearchDefault(agr[1:], flags)
+		return c.OpenSearchDefault(args[1:], flags)
 	}
 
-	link, ok := c.Config.Links[agr[0]]
+	link, ok := c.Config.Links[args[0]]
 	if ok {
 		return browser.OpenBrowser(c.Config.Browser, append(flags, link)...)
 	}
 
-	_, err := url.ParseRequestURI(agr[0])
+	_, err := url.ParseRequestURI(args[0])
 	if err != nil {
-		return c.OpenSearchDefault(agr, flags)
+		return c.OpenSearchDefault(args, flags)
 	}
 
-	return browser.OpenBrowser(c.Config.Browser, append(flags, agr[0])...)
+	return browser.OpenBrowser(c.Config.Browser, append(flags, args[0])...)
 }
 
 // OpenDefault open default browser
@@ -157,13 +157,13 @@ func (c *cli) OpenDefault(flags ...string) error {
 }
 
 // OpenSearchDefault open browser use default search method
-func (c *cli) OpenSearchDefault(agr []string, flags []string) error {
+func (c *cli) OpenSearchDefault(args []string, flags []string) error {
 	link, ok := c.Config.Search["default"]
 	if ok {
-		url, _ := utils.BuildQuery(link, "$", strings.Join(agr, " "))
+		url, _ := utils.BuildQuery(link, "$", strings.Join(args, " "))
 
 		return browser.OpenBrowser(c.Config.Browser, append(flags, url)...)
 	}
 
-	return browser.OpenBrowser(c.Config.Browser, append(flags, strings.Join(agr, " "))...)
+	return browser.OpenBrowser(c.Config.Browser, append(flags, strings.Join(args, " "))...)
 }
